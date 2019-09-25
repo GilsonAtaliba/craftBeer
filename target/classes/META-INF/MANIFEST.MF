@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: gilson
+Build-Jdk: 12.0.2
+Implementation-Title: Craft Beer
+Implementation-Version: 1.0
+Implementation-Vendor-Id: com.beerhouse
+Implementation-Vendor: Pivotal Software, Inc.
+Implementation-URL: http://projects.spring.io/spring-boot/craft-beer/
+Created-By: Maven Integration for Eclipse
+
