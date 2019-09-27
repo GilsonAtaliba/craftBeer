@@ -1,44 +1,30 @@
 package com.beerhouse;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.HttpHeaders;
-
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.beerhouse.Application;
-import com.beerhouse.service.BeerBO;
-
+import com.beerhouse.service.BeerForm;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment =  WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackageClasses = Application.class)
+@SpringBootTest(classes = Application.class, webEnvironment =  SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTests {
 	
 	@Autowired
-	private TestRestTemplate restTemplate;
+	protected TestRestTemplate restTemplate;
 	
-	private HttpHeaders httpHeaders;
-	
-	@MockBean
-	private BeerBO beerBO;
-	
-	public void RecipeValidationTest() {
-		httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-	}
-	
-	/*@Test
-	public void save() throws JsonProcessingException {
-
-		ResponseEntity<Void> response = restTemplate.exchange("/beer", HttpMethod.POST, new HttpEntity<>("{}", httpHeaders) , Void.class);
+	@Test
+	public void save(){
+		BeerForm beerForm = new BeerForm("Cauim", "ingrediente1, ingrediente 2", "7%", 20.5f, "Premium");
+		
+		ResponseEntity<Void> response = restTemplate.postForEntity("/beer", beerForm, null);
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-	}*/
-
+	}
 }
