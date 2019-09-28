@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.beerhouse.service.BeerBO;
@@ -25,50 +24,51 @@ import com.beerhouse.service.BeerDTO;
 import com.beerhouse.service.BeerForm;
 
 @RestController
-@RequestMapping(value = "/beer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes =  MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/beer")
 public class BeerController {
 	
 	@Autowired
-	BeerBO beerBO;
+	private BeerBO beerBO;
 	
-	@PostMapping()
+	@PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<Void> save(@RequestBody @Valid BeerForm beerForm){
 			if(beerBO.createBeer(beerForm)==null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();		
 		
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
-	@GetMapping()
+	@GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<List<BeerDTO>> getAllBeer(){
 	
 		final List<BeerDTO> beerDTO = beerBO.getAllBeer();
-	
+		if(beerDTO.isEmpty()) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(beerDTO);
 	}
 	
-	@GetMapping(path = "/{id}")
+	@GetMapping(path = "/{id}",  produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<BeerDTO> getBeer (@PathVariable Integer id){
 		final BeerDTO beerDTO = beerBO.getBeer(id);
 		if(beerDTO==null) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(beerDTO);
 	}
 	
-	@DeleteMapping
-	public ResponseEntity<Void> delete(@RequestParam String name){
-		if(beerBO.deleteBeer(name)==null) return ResponseEntity.notFound().build();
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	@DeleteMapping(path = "/{name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<Void> delete(@PathVariable String name){
+		if(beerBO.deleteBeer(name)!=null)return ResponseEntity.noContent().build(); 
+		return ResponseEntity.notFound().build();
+		
 	}
 	
-	@PutMapping()
-	public ResponseEntity<Void> updateBeer(@RequestParam String name, @RequestBody @Valid BeerForm beerForm){
-		if(beerBO.updateBeer(name, beerForm)==null) return ResponseEntity.notFound().build();
+	@PutMapping(path="/{name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<Void> updateBeerAllParameters(@PathVariable String name, @RequestBody @Valid BeerForm beerForm){
+		if(beerBO.updateAllBeer(name, beerForm)==null) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok().build();
 		
 	}
 	
-	@PatchMapping()
-	public ResponseEntity<Void> updatePrice(@RequestParam String name, @RequestParam float price){
-		if(beerBO.updatePrice(name, price)==null) return ResponseEntity.notFound().build();
+	@PatchMapping(path ="/{name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<Void> updateBeerOneOrMoreParameters(@PathVariable String name, @RequestBody BeerForm beerForm){
+		if(beerBO.updateNotAllBeer(name, beerForm)==null) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok().build();
 	}
 	
