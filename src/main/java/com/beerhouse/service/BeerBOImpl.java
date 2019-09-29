@@ -2,8 +2,6 @@ package com.beerhouse.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,20 +11,22 @@ import com.beerhouse.utils.Utils;
 
 
 @Service
-
 public class BeerBOImpl implements BeerBO{
 	@Autowired
 	private BeerRepository beerRepository;
 	
+	@Autowired
+	private Utils utils;
+	
 	@Override
 	public BeerDTO createBeer(BeerForm beerForm) {
-		final Beer beer = new Beer(); 
-		BeanUtils.copyProperties(beerForm, beer);
+		Beer beer = new Beer(); 
+		beer = utils.copyProperties(beer, beerForm);
 		if(beerRepository.findByName(beer.getName())!=null) return null;
 		
 		beerRepository.save(beer);
-		final BeerDTO beerDTO = new BeerDTO(); 
-		BeanUtils.copyProperties(beer, beerDTO);
+		BeerDTO beerDTO = new BeerDTO();
+		beerDTO = utils.copyProperties(beerDTO, beer);
 		return beerDTO;
 	}
 
@@ -34,8 +34,8 @@ public class BeerBOImpl implements BeerBO{
 	public BeerDTO deleteBeer(String name) {
 		final Beer beer = beerRepository.findByName(name);
 		if(beer==null) return null; 
-		final BeerDTO beerDTO = new BeerDTO(); 
-		BeanUtils.copyProperties(beer, beerDTO);
+		BeerDTO beerDTO = new BeerDTO(); 
+		beerDTO = utils.copyProperties(beerDTO, beer);
 		beerRepository.delete(beer);
 		return beerDTO;
 	}
@@ -45,12 +45,12 @@ public class BeerBOImpl implements BeerBO{
 		Beer beer = beerRepository.findByName(name);
 		if(beer!=null) {
 			Integer beerId = beer.getId();
-			BeanUtils.copyProperties(beerForm, beer);
+			beer = utils.copyProperties(beer, beerForm);
 			beer.setId(beerId);
 			beerRepository.save(beer);
 			
 			BeerDTO beerDTO = new BeerDTO(); 
-			BeanUtils.copyProperties(beer, beerDTO);
+			beerDTO = utils.copyProperties(beerDTO, beer);
 			
 			return beerDTO;
 		}
@@ -64,7 +64,7 @@ public class BeerBOImpl implements BeerBO{
 		final List<Beer> beer = beerRepository.findAll();
 		for (Beer b : beer) {
 			BeerDTO bDTO = new BeerDTO();
-			BeanUtils.copyProperties(b, bDTO);
+			bDTO  =utils.copyProperties(bDTO, b);
 			beerDTO.add(bDTO);
 		}
 		return beerDTO;
@@ -74,18 +74,18 @@ public class BeerBOImpl implements BeerBO{
 	public BeerDTO getBeer(Integer id) {
 		final Beer beer = beerRepository.findOne(id);
 		if(beer == null) return null;
-		final BeerDTO beerDTO = new BeerDTO(); 
-		BeanUtils.copyProperties(beer, beerDTO);
+		BeerDTO beerDTO = new BeerDTO(); 
+		beerDTO = utils.copyProperties(beerDTO, beer);
 		return beerDTO;
 	}
 	
 	@Override
 	public BeerDTO updateNotAllBeer(String name, BeerForm beerForm) {
-		final Beer beer = beerRepository.findByName(name);
+		Beer beer = beerRepository.findByName(name);
 		if(beer!= null) {
-			final BeerDTO beerDTO = new BeerDTO(); 			
-			Utils.copyNotNullProperties(beerForm, beer);
-			BeanUtils.copyProperties(beer, beerDTO);
+			BeerDTO beerDTO = new BeerDTO(); 			
+			beer = utils.copyNotNullProperties(beer, beerForm);
+			beerDTO = utils.copyProperties(beerDTO, beer);
 			beerRepository.save(beer);
 			return beerDTO;
 		}

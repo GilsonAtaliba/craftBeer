@@ -78,15 +78,6 @@ public class ApplicationTests {
 	}
 	
 	@Test
-	public void updateBeerOneOrMoreParametersTest(){
-		BeerForm beerForm = new BeerForm("", " ", "8%", 30.5f, null);
-		ResponseEntity response = restTemplate.patchForObject("/beer/Cauim", beerForm, ResponseEntity.class);
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-	
-	}
-	
-	
-	@Test
 	public void testDelete(){
 		 	    
 		ResponseEntity<Void> response =restTemplate.exchange("/beer/Cau", HttpMethod.DELETE, 
